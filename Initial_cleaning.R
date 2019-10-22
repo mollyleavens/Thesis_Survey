@@ -17,7 +17,13 @@
 # 3. DESCRIBES AND TRIMS KEY INDICATORS 								
 # 4. CREATES A VILLAGE-LEVEL DATASET WITH KEY INDICATORS 				
 # 5. EXPORTS TWO CSVs CONTAINING THE FINALIZED OBSERVATIONAL AND 		
-#  EXPERIMENTAL DATASETS. 												
+#  EXPERIMENTAL DATASETS. 										
+
+# The final export datasets from this file are:
+# individualHH_cleaned_both_waves.csv
+# expDataForanalysis_village.csv
+# obsDataForAnalysis_village.csv
+
 # ---------------------------------------------------------------------	#
 # ---------------------------------------------------------------------	#
 
@@ -28,13 +34,14 @@ library(dplyr)
 library(plyr)
 library(plm)
 library(stringr)
+library(haven)
 
 # ---------------------------------------------------------------------	#
 # This is set to Molly's working directory
 # I pulled these intial files from the project dropbox 
 
 # reads in the wave 1 farmer data
-wave1Data <- read.dta("Farmer_Survey_Cleaned_with_key_indicators.dta")
+wave1Data <- read_dta("Farmer_Survey_Cleaned_with_key_indicators.dta")
 
 # reads in the wave 2 farmer data
 wave2Data <- read.csv("Farmer_Survey_withKeyIndicators_wave2.csv")
@@ -98,6 +105,9 @@ colnames(all_people) <- c("b3_weed_all.2", "b3_prune_all.2", "b3_fertilizer_all.
 
 # join these new variables to wave2 
 wave2Data <- bind_cols(wave2Data, all_people)
+
+# Hybrid data for wave 2 to match wave 1 
+#wave2Data
 
 # ---------------------------------------- #
 # A FEW FIXES TO WAVE 1 DATA CLEANING
@@ -917,23 +927,22 @@ wave1Data_selected <-
   ggdumfert, gginsect, ggherb, ggfungi,
   
   # training
- ##########ggTrainingNum, ggTrainEnviron, ggTrainMaint, ggTrainPlanting,
+  #ggTrainEnviron, ggTrainMaint, ggTrainPlanting,
+  ggTrainingNum, 
  
   # farming practices
- #### "ggNumTreesPlanted"
-  ggweed, ggrows, ggshadetree, ggageoftree, ggtreesplanted,
+  ggweed, ggrows, ggshadetree, ggageoftree, ggtreesplanted, #gghybrid, ggNumTreesPlanted,
   
   # training source
-#############ggTrainOrgCOCOBOD, ggTrainOrgMFA, ggTrainOrgLBC, ggTrainOrgCoop, ggTrainOrgNGO, ggTrainOrgFarmer, ggTrainOrgOther,  
+  #ggTrainOrgCOCOBOD, ggTrainOrgMFA, ggTrainOrgLBC, ggTrainOrgCoop, ggTrainOrgNGO, ggTrainOrgFarmer, ggTrainOrgOther,  
   
-# coops, certification, and groups 
+  # coops, certification, and groups 
   ggorggroup, ggcertifiedfarmerorg, ggknowsft, ggorganic, 
   ggorg, ggOrgGroupNum, ggOrgLeader, ggFarmGroupOrCoop,
   
   # other variables
-########ggChildrenIntoFarming
-   ggborninvillage, gghealthinsurance,
-   ggwouldlosefallow,
+  #ggChildrenIntoFarming, 
+  ggborninvillage, gghealthinsurance, ggwouldlosefallow,
                   
   # child labor 
   # NOTE TO SELF: add more variables based on age if you have time
@@ -987,21 +996,21 @@ wave2Data_selected <-
     ggdumfert, gginsect, ggherb, ggfungi,
     
     # training
-    ##########ggTrainingNum, ggTrainEnviron, ggTrainMaint, ggTrainPlanting,
+    #ggTrainEnviron, ggTrainMaint, ggTrainPlanting,
+    ggTrainingNum, 
     
     # farming practices
-    #### "ggNumTreesPlanted"
-    ggweed, ggrows, ggshadetree, ggageoftree, ggtreesplanted,
+    ggweed, ggrows, ggshadetree, ggageoftree, ggtreesplanted, #gghybrid, ggNumTreesPlanted,
     
     # training source
-    #############ggTrainOrgCOCOBOD, ggTrainOrgMFA, ggTrainOrgLBC, ggTrainOrgCoop, ggTrainOrgNGO, ggTrainOrgFarmer, ggTrainOrgOther,  
+    #ggTrainOrgCOCOBOD, ggTrainOrgMFA, ggTrainOrgLBC, ggTrainOrgCoop, ggTrainOrgNGO, ggTrainOrgFarmer, ggTrainOrgOther,  
     
     # coops, certification, and groups 
     ggorggroup, ggcertifiedfarmerorg, ggknowsft, ggorganic, 
     ggorg, ggOrgGroupNum, ggOrgLeader, ggFarmGroupOrCoop,
     
     # other variables
-    ########ggChildrenIntoFarming
+    #ggChildrenIntoFarming,
     ggborninvillage, gghealthinsurance,
     ggwouldlosefallow,
     
@@ -1038,6 +1047,8 @@ farm_quest_b3 <-
     shadetree_farm = p15_shadetree_onfarm, 
     weed_farm = p20_generalstatement_aboutweed, 
     row_farm = p13_cocoatreeinrow,
+    shadetree_row_farm = p16_shadetree_inrows,
+    canopy_farm = p18_generalstatment,
     tree_dist_farm = p14_cocoatreefarapart, #renaming for easier use in analysis
     b3_weed_all.1, b3_prune_all.1, b3_fertilizer_all.1, b3_pesticides_all.1) 
 
